@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070f">
+<title>Past Tense Quest — Kelas 9</title>
+<style>
+:root{
+  --txt:#eaeefb; --muted:#98a1c4; --line:rgba(255,255,255,.12);
+  --card:rgba(255,255,255,.06); --card2:rgba(255,255,255,.10);
+  --acc:#8b5cf6; --acc2:#22d3ee; --ok:#2ee6a8; --bad:#ff5c7a; --gold:#ffc93c;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',sans-serif;
+  background:#07070f;color:var(--txt);min-height:100dvh;overflow-x:hidden;
+}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+.veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,7,18,.62) 0%,rgba(7,7,18,.82) 45%,rgba(7,7,18,.93) 100%)}
+#app{position:relative;z-index:2;max-width:440px;margin:0 auto;padding:0 16px calc(28px + env(safe-area-inset-bottom));
+  min-height:100dvh;display:flex;flex-direction:column}
+
+/* ---------- HEADER ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 0 12px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 6px 18px rgba(139,92,246,.4)}
+.brand b{display:block;font-size:14px;letter-spacing:.2px}
+.brand small{display:block;font-size:10px;color:var(--muted);margin-top:1px}
+.hud{display:flex;gap:6px}
+.pill{font-size:11px;font-weight:700;padding:7px 11px;border-radius:999px;
+  background:var(--card);border:1px solid var(--line);white-space:nowrap}
+.pill.xp{color:var(--gold)}
+.pill.lv{color:var(--acc2)}
+.bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bar-lbl{font-size:10px;color:var(--muted);text-align:right;margin-bottom:14px}
+
+/* ---------- HOME ---------- */
+.hero{background:linear-gradient(140deg,rgba(139,92,246,.24),rgba(34,211,238,.12));
+  border:1px solid var(--line);border-radius:20px;padding:16px 18px;margin-bottom:16px}
+.hero h1{margin:0 0 6px;font-size:17px}
+.hero p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.6}
+.hero .row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.tagx{font-size:10.5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);
+  border:1px solid var(--line);color:#cfd6f5}
+
+.sec-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+.sec-title h2{margin:0;font-size:13px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+.sec-title span{font-size:11px;color:var(--muted)}
+
+.card{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:14px;
+  border-radius:18px;background:var(--card);border:1px solid var(--line);
+  color:var(--txt);font-family:inherit;margin-bottom:11px;cursor:pointer;
+  transition:transform .15s,background .2s,border-color .2s}
+.card:active{transform:scale(.975)}
+.card:not(.locked):hover{background:var(--card2);border-color:rgba(139,92,246,.5)}
+.card.locked{opacity:.5;cursor:not-allowed}
+.card-emoji{width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;
+  font-size:22px;background:rgba(255,255,255,.09);border:1px solid var(--line)}
+.card-body{flex:1;min-width:0}
+.card-body h3{margin:0 0 3px;font-size:14px}
+.card-body p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.4}
+.stars{margin-top:6px;font-size:12px;letter-spacing:2px;color:var(--gold)}
+.stars .off{color:rgba(255,255,255,.2)}
+.badge-done{font-size:9.5px;font-weight:700;color:#04231a;background:var(--ok);
+  padding:3px 8px;border-radius:999px}
+.card-arrow{font-size:20px;color:var(--muted)}
+
+.footer-tools{display:flex;gap:8px;margin-top:auto;padding-top:18px}
+.tool{flex:1;padding:11px;border-radius:14px;background:rgba(255,255,255,.05);
+  border:1px solid var(--line);color:var(--muted);font-size:11.5px;font-family:inherit;
+  cursor:pointer;transition:.2s}
+.tool:active{transform:scale(.97)}
+.tool:hover{color:var(--txt);border-color:rgba(255,255,255,.3)}
+
+/* ---------- MATERIAL ---------- */
+.back{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);
+  border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:12px;
+  padding:8px 13px;border-radius:999px;margin:6px 0 16px;cursor:pointer}
+.back:active{transform:scale(.96)}
+.m-head{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+.m-head .card-emoji{width:52px;height:52px;flex:0 0 52px;font-size:26px;
+  background:linear-gradient(135deg,rgba(139,92,246,.4),rgba(34,211,238,.25))}
+.m-head h1{margin:0;font-size:17px}
+.m-head p{margin:3px 0 0;font-size:11.5px;color:var(--muted)}
+
+.m-h{font-size:14px;margin:22px 0 9px;padding-left:11px;position:relative;line-height:1.4}
+.m-h::before{content:'';position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:3px;
+  background:linear-gradient(180deg,var(--acc),var(--acc2))}
+.m-p{margin:0 0 10px;font-size:13px;line-height:1.75;color:#cbd2ee}
+.m-p b{color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.chip{font-size:11px;padding:5px 11px;border-radius:999px;background:rgba(139,92,246,.18);
+  border:1px solid rgba(139,92,246,.4);color:#c8b8ff}
+.m-box{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;
+  padding:13px;margin:10px 0 14px}
+.m-box-t{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--acc2);
+  margin-bottom:9px;font-weight:700}
+.m-row{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
+.m-row:last-child{border-bottom:none}
+.tag{flex:0 0 34px;font-size:12px;font-weight:700;color:var(--gold)}
+.code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:#d8deff;line-height:1.5}
+.m-list{margin:0 0 12px;padding-left:20px;font-size:13px;line-height:1.85;color:#cbd2ee}
+.m-list li{margin-bottom:2px}
+.m-list li b{color:#fff}
+.m-table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line);margin:10px 0 14px}
+.m-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.m-table th{background:rgba(139,92,246,.22);padding:9px 10px;text-align:left;font-size:11px;
+  text-transform:uppercase;letter-spacing:.5px;color:#cfc4ff}
+.m-table td{padding:8px 10px;border-top:1px solid rgba(255,255,255,.07);color:#cbd2ee}
+.m-table tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+.m-tip{background:rgba(255,201,60,.11);border:1px solid rgba(255,201,60,.35);border-radius:14px;
+  padding:11px 13px;font-size:12.5px;line-height:1.65;color:#ffe6a8;margin:10px 0 14px}
+
+.cta{position:sticky;bottom:0;padding:14px 0 4px;margin-top:14px;
+  background:linear-gradient(180deg,transparent,rgba(7,7,18,.95) 35%)}
+.btn{width:100%;padding:15px;border-radius:16px;border:none;font-family:inherit;
+  font-size:14px;font-weight:800;letter-spacing:.3px;cursor:pointer;color:#fff;
+  background:linear-gradient(135deg,var(--acc),#5b8cff);box-shadow:0 10px 26px rgba(139,92,246,.42);
+  transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:rgba(255,255,255,.08);border:1px solid var(--line);
+  box-shadow:none;color:var(--txt)}
+
+/* ---------- QUIZ ---------- */
+.q-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-top .num{font-size:11.5px;color:var(--muted);font-weight:700;letter-spacing:.5px}
+.q-top .scr{font-size:11.5px;color:var(--ok);font-weight:700}
+.qbar{height:7px;border-radius:999px;background:rgba(255,255,255,.09);overflow:hidden;margin-bottom:20px}
+.qbar i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--acc2),var(--ok));transition:width .4s ease}
+.q-text{font-size:16px;line-height:1.6;font-weight:600;margin:0 0 20px;min-height:52px}
+.q-text u{text-decoration:none;color:var(--acc2);border-bottom:2px solid var(--acc2);padding:0 2px}
+
+.opt{width:100%;display:flex;gap:12px;align-items:center;text-align:left;padding:14px 15px;
+  margin-bottom:10px;border-radius:16px;background:var(--card);border:1px solid var(--line);
+  color:var(--txt);font-size:14px;font-family:inherit;cursor:pointer;
+  transition:transform .15s,background .2s,border-color .2s}
+.opt:active{transform:scale(.98)}
+.opt .k{width:26px;height:26px;flex:0 0 26px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(255,255,255,.1);font-size:11.5px;font-weight:800}
+.opt.locked{pointer-events:none}
+.opt.correct{background:rgba(46,230,168,.16);border-color:rgba(46,230,168,.65);
+  box-shadow:0 0 0 3px rgba(46,230,168,.1)}
+.opt.correct .k{background:var(--ok);color:#04231a}
+.opt.wrong{background:rgba(255,92,122,.16);border-color:rgba(255,92,122,.65)}
+.opt.wrong .k{background:var(--bad);color:#2a0410}
+.opt.dim{opacity:.45}
+
+.fb{margin-top:6px;padding:13px;border-radius:16px;display:flex;gap:11px;
+  animation:slideUp .3s ease both}
+.fb.ok{background:rgba(46,230,168,.12);border:1px solid rgba(46,230,168,.4)}
+.fb.no{background:rgba(255,92,122,.12);border:1px solid rgba(255,92,122,.4)}
+.fb-icon{font-size:22px;line-height:1}
+.fb b{display:block;font-size:13px;margin-bottom:4px}
+.fb p{margin:0;font-size:12px;line-height:1.65;color:#cbd2ee}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- RESULT ---------- */
+.result{text-align:center;padding:20px 0}
+.result .trophy{font-size:66px;line-height:1;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.15) rotate(6deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.result h1{font-size:19px;margin:16px 0 4px}
+.result .sub{font-size:12.5px;color:var(--muted);margin:0 0 20px}
+.score-big{font-size:44px;font-weight:800;line-height:1;
+  background:linear-gradient(135deg,var(--acc2),var(--ok));-webkit-background-clip:text;
+  background-clip:text;color:transparent;margin-bottom:6px}
+.stars-big{font-size:36px;letter-spacing:6px;color:var(--gold);margin-bottom:18px}
+.stars-big span{display:inline-block;animation:starIn .5s cubic-bezier(.2,1.6,.4,1) both}
+.stars-big .off{color:rgba(255,255,255,.16)}
+@keyframes starIn{0%{transform:scale(0) rotate(-90deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.stat-row{display:flex;gap:9px;margin-bottom:20px}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 8px}
+.stat b{display:block;font-size:17px;margin-bottom:2px}
+.stat small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.newrec{display:inline-block;font-size:10.5px;font-weight:800;padding:5px 12px;border-radius:999px;
+  background:rgba(255,201,60,.2);border:1px solid rgba(255,201,60,.5);color:var(--gold);margin-bottom:14px}
+.res-actions{display:flex;flex-direction:column;gap:10px}
+
+/* ---------- FLASH ICON ---------- */
+.flash{position:fixed;inset:0;display:grid;place-items:center;font-size:110px;z-index:99;
+  pointer-events:none;animation:flashPop 1.1s cubic-bezier(.2,1.4,.4,1) forwards;
+  filter:drop-shadow(0 12px 40px rgba(0,0,0,.6))}
+@keyframes flashPop{
+  0%{opacity:0;transform:scale(.25) rotate(-15deg)}
+  28%{opacity:1;transform:scale(1.18) rotate(6deg)}
+  50%{transform:scale(1) rotate(0)}
+  100%{opacity:0;transform:scale(1.45)}
+}
+.fade{animation:fadeIn .28s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div class="veil"></div>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🎓</div>
+      <div>
+        <b>Past Tense Quest</b>
+        <small>Kelas 9 · Kurikulum Merdeka</small>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="pill xp" id="xpPill">⭐ 0 XP</div>
+      <div class="pill lv" id="lvPill">Lv 1</div>
+    </div>
+  </header>
+
+  <div class="bar"><i id="lvlBar" style="width:0%"></i></div>
+  <div class="bar-lbl" id="lvlLbl">0 / 100 XP menuju Level 2</div>
+
+  <main id="screen"></main>
+</div>
+
+<script>
+/* =========================================================
+   1. DATA MATERI & KUIS  (JSON-like structure)
+   ========================================================= */
+const DATA = {
+  chapters: [
+    /* ================= BAB 1 ================= */
+    {
+      id: 'bab1',
+      emoji: '🏖️',
+      title: 'Simple Past Tense',
+      subtitle: 'Kejadian selesai di masa lampau',
+      material: [
+        { t:'h', text:'Apa itu Simple Past Tense?' },
+        { t:'p', text:'Simple Past Tense digunakan untuk menyatakan kejadian yang <b>terjadi dan sudah selesai</b> di masa lampau. Tense ini sering muncul dalam teks <i>recount</i> dan <i>narrative</i>.' },
+        { t:'chips', items:['yesterday','last week','two days ago','in 2020','when I was a child','this morning'] },
+        { t:'h', text:'Rumus Kalimat Verbal' },
+        { t:'box', title:'Pola Kalimat', rows:[
+          ['(+)','Subject + V2 + Object'],
+          ['(−)','Subject + did not (didn\'t) + V1 + Object'],
+          ['(?)','Did + Subject + V1 + Object ?']
+        ]},
+        { t:'tip', text:'Setelah <b>did</b> atau <b>didn\'t</b>, kata kerja WAJIB kembali ke bentuk dasar (V1). Contoh: <i>She didn\'t <b>go</b></i> — bukan <i>didn\'t went</i>.' },
+        { t:'h', text:'Regular Verbs (Kata Kerja Beraturan)' },
+        { t:'p', text:'Bentuk V2 dibuat dengan menambahkan <b>-ed</b> pada kata kerja dasar.' },
+        { t:'list', items:[
+          '<b>play → played</b> (langsung + ed)',
+          '<b>study → studied</b> (y → i + ed)',
+          '<b>stop → stopped</b> (konsonan dobel + ed)',
+          '<b>want → wanted</b>, <b>visit → visited</b>',
+          '<b>live → lived</b> (sudah berakhiran e, cukup + d)'
+        ]},
+        { t:'h', text:'Irregular Verbs (Kata Kerja Tak Beraturan)' },
+        { t:'p', text:'Bentuknya tidak mengikuti pola -ed dan harus dihafalkan.' },
+        { t:'table', head:['V1','V2','Arti'], rows:[
+          ['go','went','pergi'],
+          ['eat','ate','makan'],
+          ['see','saw','melihat'],
+          ['buy','bought','membeli'],
+          ['write','wrote','menulis'],
+          ['take','took','mengambil'],
+          ['come','came','datang'],
+          ['make','made','membuat'],
+          ['speak','spoke','berbicara'],
+          ['think','thought','berpikir'],
+          ['teach','taught','mengajar'],
+          ['drink','drank','minum']
+        ]},
+        { t:'h', text:'To Be: Was / Were' },
+        { t:'box', title:'Pola Kalimat Nominal', rows:[
+          ['(+)','Subject + was/were + Complement'],
+          ['(−)','Subject + was/were + not + Complement'],
+          ['(?)','Was/Were + Subject + Complement ?']
+        ]},
+        { t:'list', items:[
+          '<b>I, He, She, It</b> → <b>was</b>',
+          '<b>You, We, They</b> → <b>were</b>'
+        ]},
+        { t:'h', text:'Contoh Kalimat' },
+        { t:'list', items:[
+          'I <b>went</b> to Bali last holiday. <i>(Saya pergi ke Bali liburan lalu.)</i>',
+          'She <b>didn\'t come</b> to school yesterday.',
+          '<b>Did</b> you <b>finish</b> your homework?',
+          'They <b>were</b> at the library two hours ago.',
+          'He <b>wasn\'t</b> at home when I called him.'
+        ]}
+      ],
+      quiz: [
+        { q:'I ___ to the beach last Sunday.', o:['go','went','gone','going'], a:1,
+          e:'Keterangan waktu "last Sunday" menandakan lampau, sehingga dipakai V2: go → went.' },
+        { q:'She ___ breakfast this morning.', o:['didn\'t ate','didn\'t eat','doesn\'t eat','not eat'], a:1,
+          e:'Setelah "didn\'t" kata kerja harus kembali ke bentuk dasar (V1), jadi "didn\'t eat".' },
+        { q:'___ you watch the movie last night?', o:['Do','Does','Did','Were'], a:2,
+          e:'Kalimat tanya lampau untuk kata kerja verbal memakai pola Did + S + V1.' },
+        { q:'They ___ very happy yesterday.', o:['was','were','is','are'], a:1,
+          e:'Subjek "They" berbentuk jamak, sehingga to be yang tepat adalah "were".' },
+        { q:'My father ___ a new car last month.', o:['buy','buys','bought','buying'], a:2,
+          e:'"Buy" adalah kata kerja tak beraturan: buy → bought.' },
+        { q:'The children ___ football in the yard an hour ago.', o:['play','plays','played','playing'], a:2,
+          e:'"Play" adalah kata kerja beraturan → played. Frasa "an hour ago" menunjukkan lampau.' },
+        { q:'He ___ at home when I called him.', o:['isn\'t','wasn\'t','weren\'t','didn\'t be'], a:1,
+          e:'Subjek "He" tunggal memakai "was". Bentuk negatifnya "wasn\'t" (was not).' },
+        { q:'___ she study for the test last night?', o:['Do','Did','Was','Is'], a:1,
+          e:'Pola pertanyaan verbal lampau: Did + Subject + V1. Maka "Did she study...?"' },
+        { q:'We ___ a rainbow after the rain yesterday.', o:['see','saw','seen','seeing'], a:1,
+          e:'"See" tidak beraturan: see → saw (V2).' },
+        { q:'Dina ___ a letter to her grandmother last week.', o:['write','wrote','written','writes'], a:1,
+          e:'"Write" tidak beraturan: write → wrote (V2).' }
+      ]
+    },
+
+    /* ================= BAB 2 ================= */
+    {
+      id: 'bab2',
+      emoji: '🌧️',
+      title: 'Past Continuous Tense',
+      subtitle: 'Aksi yang sedang berlangsung di masa lalu',
+      material: [
+        { t:'h', text:'Apa itu Past Continuous Tense?' },
+        { t:'p', text:'Past Continuous Tense digunakan untuk menyatakan kejadian yang <b>sedang berlangsung</b> pada waktu tertentu di masa lampau.' },
+        { t:'chips', items:['at 8 p.m. last night','while','when','all day yesterday','at that moment'] },
+        { t:'h', text:'Rumus Kalimat' },
+        { t:'box', title:'Pola Kalimat', rows:[
+          ['(+)','Subject + was/were + V-ing + Object'],
+          ['(−)','Subject + was/were + not + V-ing + Object'],
+          ['(?)','Was/Were + Subject + V-ing + Object ?']
+        ]},
+        { t:'tip', text:'<b>I, He, She, It</b> → was &nbsp;|&nbsp; <b>You, We, They</b> → were. Jangan lupa akhiran <b>-ing</b> pada kata kerja!' },
+        { t:'h', text:'Kapan Digunakan?' },
+        { t:'list', items:[
+          '<b>Aksi sedang berlangsung</b> pada waktu lampau tertentu.<br><i>At 7 o\'clock last night, I <b>was having</b> dinner.</i>',
+          '<b>Dua aksi bersamaan</b>, dihubungkan dengan "while".<br><i>While I <b>was reading</b>, my sister <b>was drawing</b>.</i>',
+          '<b>Aksi yang terpotong</b> aksi lain, dihubungkan dengan "when".<br><i>I <b>was sleeping</b> when the phone <b>rang</b>.</i>'
+        ]},
+        { t:'h', text:'Aturan Penting: When vs While' },
+        { t:'box', title:'Pola Gabungan', rows:[
+          ['when','Simple Past (aksi pemutus)'],
+          ['while','Past Continuous (aksi yang sedang berjalan)']
+        ]},
+        { t:'p', text:'Contoh: <b>While</b> mother <b>was cooking</b>, father <b>was reading</b> a newspaper.' },
+        { t:'h', text:'Contoh Kalimat' },
+        { t:'list', items:[
+          'They <b>were playing</b> football at 4 p.m. yesterday.',
+          'She <b>was not listening</b> to music at that moment.',
+          '<b>Were</b> you <b>sleeping</b> when I called you?',
+          'It <b>was raining</b> heavily all night.',
+          'The students <b>were studying</b> when the teacher came in.'
+        ]}
+      ],
+      quiz: [
+        { q:'At 8 o\'clock last night, I ___ TV.', o:['watch','watched','was watching','were watching'], a:2,
+          e:'Aksi sedang berlangsung pada waktu lampau tertentu → was/were + V-ing. Subjek "I" memakai "was watching".' },
+        { q:'They ___ football when it started to rain.', o:['were not playing','was not playing','did not played','are not playing'], a:0,
+          e:'Subjek "They" memakai "were". Negatif: were not + V-ing → "were not playing".' },
+        { q:'___ you sleeping when I called you?', o:['Did','Do','Were','Was'], a:2,
+          e:'Pola pertanyaan: Was/Were + S + V-ing. Subjek "you" memakai "Were".' },
+        { q:'While mother ___ , father was reading a newspaper.', o:['cooked','was cooking','were cooking','cook'], a:1,
+          e:'"While" diikuti Past Continuous. Subjek "mother" tunggal → was cooking.' },
+        { q:'The students ___ when the teacher came in.', o:['was studying','were studying','study','studied'], a:1,
+          e:'Subjek "The students" jamak → were studying.' },
+        { q:'She ___ to music at 9 p.m. last night.', o:['was not listening','were not listening','did not listened','not listening'], a:0,
+          e:'Subjek "She" → was. Negatif: was not + V-ing → "was not listening".' },
+        { q:'What ___ he ___ at 3 p.m. yesterday?', o:['was / doing','were / doing','did / doing','was / did'], a:0,
+          e:'Pertanyaan Past Continuous: Question word + was/were + S + V-ing → "What was he doing...?"' },
+        { q:'We ___ home when we saw an accident.', o:['walked','were walking','was walking','walk'], a:1,
+          e:'Subjek "We" → were. Aksi sedang berlangsung saat terpotong → were walking.' },
+        { q:'It ___ heavily all night.', o:['was raining','were raining','rains','rain'], a:0,
+          e:'Subjek "It" memakai "was" → was raining.' },
+        { q:'The babies ___ when their mother came home.', o:['was sleeping','were sleeping','sleep','slept'], a:1,
+          e:'"The babies" jamak → were sleeping.' }
+      ]
+    },
+
+    /* ================= BAB 3 ================= */
+    {
+      id: 'bab3',
+      emoji: '⏳',
+      title: 'Past Perfect Tense',
+      subtitle: 'Aksi yang selesai sebelum aksi lain',
+      material: [
+        { t:'h', text:'Apa itu Past Perfect Tense?' },
+        { t:'p', text:'Past Perfect Tense menyatakan kejadian yang <b>sudah selesai</b> sebelum kejadian lain terjadi di masa lampau. Jadi ada dua kejadian: yang <b>lebih dulu</b> memakai Past Perfect, yang <b>kemudian</b> memakai Simple Past.' },
+        { t:'chips', items:['before','after','already','just','never','by the time'] },
+        { t:'h', text:'Rumus Kalimat' },
+        { t:'box', title:'Pola Kalimat', rows:[
+          ['(+)','Subject + had + V3 + Object'],
+          ['(−)','Subject + had not (hadn\'t) + V3 + Object'],
+          ['(?)','Had + Subject + V3 + Object ?']
+        ]},
+        { t:'tip', text:'<b>had</b> dipakai untuk SEMUA subjek (I, you, he, she, it, we, they). Tidak berubah seperti was/were!' },
+        { t:'h', text:'Cara Menggabungkan Dua Kejadian' },
+        { t:'box', title:'Pola Gabungan', rows:[
+          ['before','Past Perfect + before + Simple Past'],
+          ['after','Simple Past + after + Past Perfect'],
+          ['by the time','Past Perfect + by the time + Simple Past']
+        ]},
+        { t:'h', text:'Contoh Kalimat' },
+        { t:'list', items:[
+          'When I <b>arrived</b> at the station, the train <b>had</b> already <b>left</b>.',
+          'After we <b>had eaten</b> dinner, we watched a movie.',
+          'She <b>had not finished</b> her homework before she went to bed.',
+          '<b>Had</b> he <b>left</b> when you got there?',
+          'By the time the police came, the thief <b>had run</b> away.'
+        ]},
+        { t:'h', text:'V3 — Bentuk Kata Kerja Ketiga' },
+        { t:'table', head:['V1','V2','V3'], rows:[
+          ['go','went','gone'],
+          ['eat','ate','eaten'],
+          ['see','saw','seen'],
+          ['write','wrote','written'],
+          ['take','took','taken'],
+          ['speak','spoke','spoken'],
+          ['do','did','done'],
+          ['buy','bought','bought']
+        ]},
+        { t:'tip', text:'Perhatikan: sebagian kata kerja tak beraturan memiliki V2 = V3 (contoh: buy – bought – bought), sebagian berbeda (contoh: write – wrote – written).' }
+      ],
+      quiz: [
+        { q:'When I arrived at the cinema, the film ___ .', o:['started','had started','was starting','starts'], a:1,
+          e:'Film sudah mulai SEBELUM saya tiba → kejadian lebih dulu memakai had + V3: had started.' },
+        { q:'She ___ her homework before she went to bed.', o:['had not finished','did not finished','was not finishing','has not finished'], a:0,
+          e:'Negatif Past Perfect: had not + V3 → "had not finished".' },
+        { q:'___ he left when you got there?', o:['Did','Had','Was','Has'], a:1,
+          e:'Pertanyaan Past Perfect: Had + S + V3 → "Had he left...?"' },
+        { q:'After we ___ dinner, we watched a movie.', o:['had eaten','have eaten','were eating','eat'], a:0,
+          e:'Setelah "after" digunakan Past Perfect untuk aksi yang lebih dulu: had eaten.' },
+        { q:'By the time the police came, the thief ___ away.', o:['ran','had run','was running','runs'], a:1,
+          e:'"By the time" + Simple Past, aksi sebelumnya memakai had + V3 → had run.' },
+        { q:'I ___ such a beautiful beach before that day.', o:['had never seen','have never seen','never saw','was never seeing'], a:0,
+          e:'Pengalaman sebelum waktu lampau tertentu → had never + V3 → "had never seen".' },
+        { q:'They ___ the tickets before I called them.', o:['had already bought','already bought','have already bought','were buying'], a:0,
+          e:'"Already" pada Past Perfect diletakkan di antara had dan V3: had already bought.' },
+        { q:'The train ___ before we reached the station.', o:['left','had left','leaves','was leaving'], a:1,
+          e:'Kereta sudah berangkat sebelum kita tiba → had left.' },
+        { q:'She told me that she ___ her keys.', o:['lost','had lost','loses','was losing'], a:1,
+          e:'Kejadian di masa lalu yang lebih lampau dari "told" memakai had + V3 → had lost.' },
+        { q:'We ___ the news until our teacher told us.', o:['had not heard','did not heard','were not hearing','have not heard'], a:0,
+          e:'Negatif Past Perfect: had not + V3 → "had not heard".' }
+      ]
+    }
+  ]
+};
+
+/* =========================================================
+   2. PENYIMPANAN (localStorage + JSON)
+   ========================================================= */
+const SAVE_KEY = 'past_tense_quest_v1';
+
+const defaultState = () => ({ xp: 0, chapters: {} });
+
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return defaultState();
+    const obj = JSON.parse(raw);
+    return {
+      xp: Number(obj.xp) || 0,
+      chapters: obj.chapters && typeof obj.chapters === 'object' ? obj.chapters : {}
+    };
+  }catch(err){
+    console.warn('Gagal memuat progres, memakai data baru.', err);
+    return defaultState();
+  }
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  }catch(err){
+    console.warn('Gagal menyimpan progres.', err);
+  }
+}
+
+function addXP(n){
+  state.xp += n;
+  saveState();
+  updateHUD();
+}
+
+/* =========================================================
+   3. WEBGL BACKGROUND (shader aurora)
+   ========================================================= */
+(function initWebGL(){
+  const canvas = document.getElementById('bg');
+  const gl = canvas.getContext('webgl', {antialias:true, alpha:false, powerPreference:'low-power'})
+          || canvas.getContext('experimental-webgl');
+
+  if(!gl){
+    // Fallback CSS gradient kalau WebGL tidak didukung
+    document.body.style.background =
+      'radial-gradient(circle at 20% 10%,#241a4d 0%,#0b0b1c 45%,#05050d 100%)';
+    canvas.style.display = 'none';
+    return;
+  }
+
+  const VS = `
+    attribute vec2 aPos;
+    void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }
+  `;
+
+  const FS = `
+    precision highp float;
+    uniform float uTime;
+    uniform vec2  uRes;
+
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes;
+      vec2 p  = (gl_FragCoord.xy * 2.0 - uRes) / min(uRes.x, uRes.y);
+      float t = uTime * 0.15;
+
+      float w = 0.0;
+      w += sin(p.x * 1.8 + t * 1.7);
+      w += sin(p.y * 2.4 - t * 1.3);
+      w += sin((p.x + p.y) * 1.5 + t);
+      w += sin(length(p * 1.2) * 2.2 - t * 1.6);
+      w *= 0.25;
+
+      float m = smoothstep(-0.65, 0.95, w);
+
+      vec3 c1 = vec3(0.035, 0.040, 0.115);
+      vec3 c2 = vec3(0.300, 0.170, 0.720);
+      vec3 c3 = vec3(0.040, 0.520, 0.720);
+
+      vec3 col = mix(c1, c2, m);
+      float n = sin(p.x * 0.9 + p.y * 0.7 + t * 2.0) * 0.5 + 0.5;
+      col = mix(col, c3, smoothstep(0.35, 0.95, n) * 0.55);
+
+      float vig = 1.0 - 0.60 * length(uv - 0.5);
+      col *= vig;
+
+      col += 0.025 * vec3(sin(uTime * 0.7 + p.x * 3.0),
+                          sin(uTime * 0.9 + p.y * 2.0),
+                          sin(uTime * 0.5 + p.x * 2.0));
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function compile(type, src){
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
+      console.error(gl.getShaderInfoLog(s));
+      return null;
+    }
+    return s;
+  }
+
+  const vs = compile(gl.VERTEX_SHADER, VS);
+  const fs = compile(gl.FRAGMENT_SHADER, FS);
+  if(!vs || !fs) return;
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
+    console.error(gl.getProgramInfoLog(prog));
+    return;
+  }
+  gl.useProgram(prog);
+
+  // Fullscreen quad
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1,-1,  1,-1, -1, 1,
+    -1, 1,  1,-1,  1, 1
+  ]), gl.STATIC_DRAW);
+
+  const aPos = gl.getAttribLocation(prog, 'aPos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const uTime = gl.getUniformLocation(prog, 'uTime');
+  const uRes  = gl.getUniformLocation(prog, 'uRes');
+
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.floor(window.innerWidth  * dpr);
+    const h = Math.floor(window.innerHeight * dpr);
+    if(canvas.width !== w || canvas.height !== h){
+      canvas.width  = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let raf = 0;
+  const start = performance.now();
+
+  function loop(now){
+    resize();
+    gl.uniform1f(uTime, (now - start) / 1000);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    raf = requestAnimationFrame(loop);
+  }
+  raf = requestAnimationFrame(loop);
+
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden) cancelAnimationFrame(raf);
+    else raf = requestAnimationFrame(loop);
+  });
+})();
+
+/* =========================================================
+   4. STATE APLIKASI & ROUTER
+   ========================================================= */
+const screenEl = document.getElementById('screen');
+const xpPill   = document.getElementById('xpPill');
+const lvPill   = document.getElementById('lvPill');
+const lvlBar   = document.getElementById('lvlBar');
+const lvlLbl   = document.getElementById('lvlLbl');
+
+let view = { name:'home', chapterId:null };
+let quiz = { chapterId:null, idx:0, correct:0, locked:false, xpGained:0 };
+
+const LEVEL_STEP = 100;
+const getChapter = id => DATA.chapters.find(c => c.id === id);
+const isUnlocked = idx => idx === 0 || !!(state.chapters[DATA.chapters[idx-1].id]?.done);
+
+function updateHUD(){
+  const lv = Math.floor(state.xp / LEVEL_STEP) + 1;
+  const inLv = state.xp % LEVEL_STEP;
+  xpPill.textContent = `⭐ ${state.xp} XP`;
+  lvPill.textContent = `Lv ${lv}`;
+  lvlBar.style.width = (inLv / LEVEL_STEP * 100) + '%';
+  lvlLbl.textContent = `${inLv} / ${LEVEL_STEP} XP menuju Level ${lv + 1}`;
+}
+
+function render(){
+  if(view.name === 'home')           renderHome();
+  else if(view.name === 'material')  renderMaterial();
+  else if(view.name === 'quiz')      renderQuiz();
+  else if(view.name === 'result')    renderResult();
+
+  updateHUD();
+  window.scrollTo({ top:0, behavior:'instant' in window ? 'auto' : 'auto' });
+}
+
+/* =========================================================
+   5. SCREEN: HOME
+   ========================================================= */
+function renderHome(){
+  const doneCount = DATA.chapters.filter(c => state.chapters[c.id]?.done).length;
+  const total = DATA.chapters.length;
+
+  const cards = DATA.chapters.map((c, i) => {
+    const unlocked = isUnlocked(i);
+    const prog = state.chapters[c.id] || { best:0, stars:0, done:false };
+    const starHtml = [0,1,2].map(n =>
+      `<span class="${n < prog.stars ? '' : 'off'}">★</span>`).join('');
+
+    return `
+      <button class="card ${unlocked ? '' : 'locked'}"
+              data-act="${unlocked ? 'open' : 'locked'}" data-id="${c.id}">
+        <div class="card-emoji">${unlocked ? c.emoji : '🔒'}</div>
+        <div class="card-body">
+          <h3>${c.title}</h3>
+          <p>${c.subtitle}</p>
+          <div class="stars">${starHtml}</div>
+        </div>
+        ${prog.done
+          ? '<span class="badge-done">SELESAI</span>'
+          : `<span class="card-arrow">${unlocked ? '›' : ''}</span>`}
+      </button>
+    `;
+  }).join('');
+
+  screenEl.innerHTML = `
+    <div class="fade">
+      <div class="hero">
+        <h1>Selamat datang, Petualang! 👋</h1>
+        <p>Kuasai <b>Past Tense</b> lewat 3 bab seru. Baca materinya, lalu taklukkan 10 soal di setiap bab untuk mengumpulkan bintang dan XP!</p>
+        <div class="row">
+          <span class="tagx">📖 3 Bab Materi</span>
+          <span class="tagx">❓ 30 Soal Kuis</span>
+          <span class="tagx">🏆 ${doneCount}/${total} Selesai</span>
+        </div>
+      </div>
+
+      <div class="sec-title">
+        <h2>Daftar Bab</h2>
+        <span>${doneCount}/${total} selesai</span>
+      </div>
+      ${cards}
+
+      <div class="footer-tools">
+        <button class="tool" data-act="export">⬇️ Ekspor JSON</button>
+        <button class="tool" data-act="reset">♻️ Reset Progres</button>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   6. SCREEN: MATERIAL
+   ========================================================= */
+function blockHTML(b){
+  switch(b.t){
+    case 'h':     return `<h2 class="m-h">${b.text}</h2>`;
+    case 'p':     return `<p class="m-p">${b.text}</p>`;
+    case 'tip':   return `<div class="m-tip">💡 ${b.text}</div>`;
+    case 'chips': return `<div class="chips">${b.items.map(i => `<span class="chip">${i}</span>`).join('')}</div>`;
+    case 'list':  return `<ul class="m-list">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    case 'box':   return `
+      <div class="m-box">
+        <div class="m-box-t">${b.title}</div>
+        ${b.rows.map(r => `<div class="m-row"><span class="tag">${r[0]}</span><span class="code">${r[1]}</span></div>`).join('')}
+      </div>`;
+    case 'table': return `
+      <div class="m-table-wrap">
+        <table class="m-table">
+          <thead><tr>${b.head.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+          <tbody>${b.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+    default: return '';
+  }
+}
+
+function renderMaterial(){
+  const ch = getChapter(view.chapterId);
+  const prog = state.chapters[ch.id] || { best:0, stars:0, done:false };
+
+  screenEl.innerHTML = `
+    <div class="fade">
+      <button class="back" data-act="home">‹ Beranda</button>
+
+      <div class="m-head">
+        <div class="card-emoji">${ch.emoji}</div>
+        <div>
+          <h1>${ch.title}</h1>
+          <p>${ch.subtitle}</p>
+        </div>
+      </div>
+
+      ${ch.material.map(blockHTML).join('')}
+
+      <div class="cta">
+        <button class="btn" data-act="start" data-id="${ch.id}">
+          🚀 Mulai Kuis (10 Soal)
+        </button>
+        ${prog.best > 0
+          ? `<p style="text-align:center;font-size:11px;color:var(--muted);margin:10px 0 0">
+               Skor terbaikmu: <b style="color:var(--ok)">${prog.best}/10</b>
+             </p>`
+          : ''}
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   7. SCREEN: QUIZ
+   ========================================================= */
+function startQuiz(id){
+  quiz = { chapterId:id, idx:0, correct:0, locked:false, xpGained:0 };
+  view = { name:'quiz', chapterId:id };
+  render();
+}
+
+function renderQuiz(){
+  const ch = getChapter(view.chapterId);
+  const total = ch.quiz.length;
+  const q = ch.quiz[quiz.idx];
+  const letters = ['A','B','C','D'];
+
+  screenEl.innerHTML = `
+    <div class="fade">
+      <div class="q-top">
+        <span class="num">SOAL ${quiz.idx + 1} / ${total}</span>
+        <span class="scr">✔ ${quiz.correct} benar</span>
+      </div>
+      <div class="qbar"><i style="width:${((quiz.idx) / total) * 100}%"></i></div>
+
+      <p class="q-text">${q.q}</p>
+
+      <div id="opts">
+        ${q.o.map((o, i) => `
+          <button class="opt" data-act="opt" data-i="${i}">
+            <span class="k">${letters[i]}</span>
+            <span>${o}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      <div id="feedback" hidden></div>
+
+      <div class="cta">
+        <button class="btn" id="nextBtn" data-act="next" hidden>
+          ${quiz.idx + 1 === total ? '🏁 Lihat Hasil' : 'Lanjut ›'}
+        </button>
+        <button class="btn ghost" data-act="quit" style="margin-top:8px">Keluar Kuis</button>
+      </div>
+    </div>
+  `;
+
+  quiz.locked = false;
+}
+
+/* --- Icon flash saat jawaban benar / salah --- */
+function showFlash(symbol, ok){
+  const el = document.createElement('div');
+  el.className = 'flash';
+  el.textContent = symbol;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1150);
+  if(navigator.vibrate) navigator.vibrate(ok ? 35 : [25, 45, 25]);
+}
+
+function answerOption(i){
+  if(quiz.locked) return;
+  quiz.locked = true;
+
+  const ch = getChapter(view.chapterId);
+  const q  = ch.quiz[quiz.idx];
+  const ok = (i === q.a);
+
+  if(ok){
+    quiz.correct++;
+    quiz.xpGained += 10;
+    addXP(10);
+    showFlash('✅', true);
+  }else{
+    showFlash('❌', false);
+  }
+
+  document.querySelectorAll('.opt').forEach((btn, idx) => {
+    btn.classList.add('locked');
+    if(idx === q.a) btn.classList.add('correct');
+    else if(idx === i) btn.classList.add('wrong');
+    else btn.classList.add('dim');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.hidden = false;
+  fb.innerHTML = `
+    <div class="fb ${ok ? 'ok' : 'no'}">
+      <div class="fb-icon">${ok ? '🎉' : '💡'}</div>
+      <div>
+        <b>${ok ? 'Tepat sekali! +10 XP' : 'Belum tepat'}</b>
+        <p>${ok ? '' : `Jawaban benar: <b>${q.o[q.a]}</b>. `}${q.e}</p>
+      </div>
+    </div>
+  `;
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.hidden = false;
+  setTimeout(() => fb.scrollIntoView({ behavior:'smooth', block:'nearest' }), 120);
+}
+
+function nextQuestion(){
+  const ch = getChapter(view.chapterId);
+  quiz.idx++;
+  if(quiz.idx >= ch.quiz.length) finishQuiz();
+  else render();
+}
+
+/* =========================================================
+   8. SCREEN: RESULT
+   ========================================================= */
+function finishQuiz(){
+  const ch = getChapter(view.chapterId);
+  const total = ch.quiz.length;
+  const score = quiz.correct;
+  const stars = score >= 10 ? 3 : score >= 8 ? 2 : score >= 6 ? 1 : 0;
+
+  const prev = state.chapters[ch.id] || { done:false, best:0, stars:0 };
+  const isNewRecord = score > prev.best;
+  const passed = score >= 6;
+
+  let bonus = 0;
+  if(passed && !prev.done) bonus = 25; // bonus penyelesaian bab pertama kali
+
+  state.chapters[ch.id] = {
+    done: prev.done || passed,
+    best: Math.max(prev.best, score),
+    stars: Math.max(prev.stars, stars)
+  };
+  if(bonus) addXP(bonus);
+  saveState();
+
+  view = { name:'result', chapterId:ch.id };
+  quiz.resultData = { score, total, stars, isNewRecord, passed, bonus };
+  render();
+}
+
+function renderResult(){
+  const ch = getChapter(view.chapterId);
+  const { score, total, stars, isNewRecord, passed, bonus } = quiz.resultData;
+
+  const starsHTML = [0,1,2].map(n =>
+    `<span class="${n < stars ? '' : 'off'}" style="animation-delay:${n * 0.15}s">★</span>`).join('');
+
+  const title = score === total ? 'Sempurna! 🏆'
+              : score >= 8 ? 'Luar biasa! 🌟'
+              : score >= 6 ? 'Bagus, terus berlatih! 💪'
+              : 'Jangan menyerah! 🔥';
+
+  const sub = score === total
+    ? 'Kamu menjawab semua soal dengan benar. Kamu ahli Past Tense!'
+    : passed
+      ? 'Kamu sudah lulus bab ini. Bab berikutnya terbuka!'
+      : 'Kamu perlu minimal 6 jawaban benar untuk membuka bab berikutnya. Baca ulang materinya, lalu coba lagi!';
+
+  const nextIdx = DATA.chapters.findIndex(c => c.id === ch.id) + 1;
+  const hasNext = nextIdx < DATA.chapters.length;
+
+  screenEl.innerHTML = `
+    <div class="fade result">
+      <div class="trophy">${score === total ? '🏆' : passed ? '🎖️' : '📚'}</div>
+      <h1>${title}</h1>
+      <p class="sub">${sub}</p>
+
+      <div class="score-big">${score}<span style="font-size:22px;color:var(--muted)">/${total}</span></div>
+      <div class="stars-big">${starsHTML}</div>
+
+      ${isNewRecord ? '<div class="newrec">🎯 REKOR BARU!</div>' : ''}
+
+      <div class="stat-row">
+        <div class="stat"><b style="color:var(--ok)">+${score * 10}</b><small>XP Jawaban</small></div>
+        <div class="stat"><b style="color:var(--gold)">+${bonus}</b><small>Bonus Bab</small></div>
+        <div class="stat"><b style="color:var(--acc2)">${stars}</b><small>Bintang</small></div>
+      </div>
+
+      <div class="res-actions">
+        ${hasNext && passed
+          ? `<button class="btn" data-act="open" data-id="${DATA.chapters[nextIdx].id}">
+               ➡️ Lanjut ke ${DATA.chapters[nextIdx].title}
+             </button>`
+          : ''}
+        <button class="btn ${hasNext && passed ? 'ghost' : ''}" data-act="retry" data-id="${ch.id}">
+          🔄 Ulangi Kuis
+        </button>
+        <button class="btn ghost" data-act="backmat" data-id="${ch.id}">
+          📖 Baca Materi Lagi
+        </button>
+        <button class="btn ghost" data-act="home">🏠 Kembali ke Beranda</button>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   9. EVENT DELEGATION
+   ========================================================= */
+screenEl.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+
+  const act = el.dataset.act;
+  const id  = el.dataset.id;
+
+  switch(act){
+    case 'open':
+      view = { name:'material', chapterId:id };
+      render();
+      break;
+
+    case 'locked':
+      showFlash('🔒', false);
+      break;
+
+    case 'home':
+      view = { name:'home', chapterId:null };
+      render();
+      break;
+
+    case 'start':
+      startQuiz(id);
+      break;
+
+    case 'opt':
+      answerOption(Number(el.dataset.i));
+      break;
+
+    case 'next':
+      nextQuestion();
+      break;
+
+    case 'quit':
+      if(confirm('Keluar dari kuis? Progres kuis bab ini akan hilang.')){
+        view = { name:'home', chapterId:null };
+        render();
+      }
+      break;
+
+    case 'retry':
+      startQuiz(id);
+      break;
+
+    case 'backmat':
+      view = { name:'material', chapterId:id };
+      render();
+      break;
+
+    case 'export': {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'past-tense-quest-progress.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      break;
+    }
+
+    case 'reset': {
+      if(confirm('Reset semua progres (XP, bintang, bab)? Tindakan ini tidak bisa dibatalkan.')){
+        state = defaultState();
+        saveState();
+        render();
+      }
+      break;
+    }
+  }
+});
+
+/* =========================================================
+   10. MULAI
+   ========================================================= */
+updateHUD();
+render();
+</script>
+</body>
+</html>
